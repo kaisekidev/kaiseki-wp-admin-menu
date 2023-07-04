@@ -33,7 +33,7 @@ class RemoveAdminMenuPages implements HookCallbackProviderInterface
                 remove_menu_page($page);
             }
 
-            if ($callback === false) {
+            if (is_bool($callback)) {
                 continue;
             }
 
