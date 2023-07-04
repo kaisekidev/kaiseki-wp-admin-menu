@@ -14,7 +14,7 @@ final class RemoveAdminMenuPagesFactory
 {
     public function __invoke(ContainerInterface $container): RemoveAdminMenuPages
     {
-        /** @var array<string, RemovePageCallback> $pages */
+        /** @var array<string, RemovePageCallback|bool> $pages */
         $pages = Config::get($container)->array('admin_menu/remove_menu_pages', []);
         return new RemoveAdminMenuPages($pages);
     }

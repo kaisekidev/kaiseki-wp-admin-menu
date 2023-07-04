@@ -15,7 +15,7 @@ use function is_callable;
 class RemoveAdminMenuPages implements HookCallbackProviderInterface
 {
     /**
-     * @param array<string, RemovePageCallback> $pages
+     * @param array<string, RemovePageCallback|bool> $pages
      */
     public function __construct(private readonly array $pages)
     {
@@ -29,12 +29,22 @@ class RemoveAdminMenuPages implements HookCallbackProviderInterface
     public function walkConfig(): void
     {
         foreach ($this->pages as $page => $callback) {
+            if ($callback === true) {
+                remove_menu_page($page);
+            }
+
+            if ($callback === false) {
+                continue;
+            }
+
             if (!is_callable($callback)) {
                 throw new RuntimeException('Callback for page ' . $page . ' is not callable');
             }
+
             if ($callback() === false) {
                 continue;
             }
+
             remove_menu_page($page);
         }
     }
