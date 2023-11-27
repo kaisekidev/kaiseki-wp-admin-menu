@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace Kaiseki\WordPress\AdminMenu;
 
+use Kaiseki\WordPress\Context\Filter\ContextFilterInterface;
 use Kaiseki\WordPress\Hook\HookCallbackProviderInterface;
-use RuntimeException;
 
-use function is_callable;
-
-/**
- * @phpstan-type RemovePageCallback callable(): bool
- */
 class RemoveAdminMenuPages implements HookCallbackProviderInterface
 {
     /**
-     * @param array<string, RemovePageCallback|bool> $pages
+     * @param array<string, bool|ContextFilterInterface> $pages
      */
-    public function __construct(private readonly array $pages)
+    public function __construct(private readonly array $pages = [])
     {
     }
 
@@ -28,20 +23,8 @@ class RemoveAdminMenuPages implements HookCallbackProviderInterface
 
     public function walkConfig(): void
     {
-        foreach ($this->pages as $page => $callback) {
-            if ($callback === true) {
-                remove_menu_page($page);
-            }
-
-            if (is_bool($callback)) {
-                continue;
-            }
-
-            if (!is_callable($callback)) {
-                throw new RuntimeException('Callback for page ' . $page . ' is not callable');
-            }
-
-            if ($callback() === false) {
+        foreach ($this->pages as $page => $condition) {
+            if ($condition !== true && ($condition instanceof ContextFilterInterface && $condition() === false)) {
                 continue;
             }
 
