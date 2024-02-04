@@ -44,7 +44,12 @@ class ChangeAdminMenuOrder implements HookCallbackProviderInterface
             return $menuOrder;
         }
         $newMenuOrder = array_merge($customMenuOrder, array_diff($menuOrder, $customMenuOrder));
-        if ($this->debugMenuOrder === true && $this->environment->isDevelopment()) {
+        if (
+            $this->debugMenuOrder === true
+            && (
+                $this->environment->isDevelopment()
+                || $this->environment->isLocal()
+            )) {
             $this->debugMenuOrder($menuOrder);
         }
         return $newMenuOrder;

@@ -20,7 +20,6 @@ class AddAdminMenuSeparators implements HookCallbackProviderInterface
 
     public function registerHookCallbacks(): void
     {
-
         add_action('admin_menu', [$this, 'addMenuSeparators']);
     }
 
