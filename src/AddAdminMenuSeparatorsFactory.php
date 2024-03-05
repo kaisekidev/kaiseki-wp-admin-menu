@@ -11,10 +11,11 @@ final class AddAdminMenuSeparatorsFactory
 {
     public function __invoke(ContainerInterface $container): AddAdminMenuSeparators
     {
-        $config = Config::get($container);
+        $config = Config::fromContainer($container);
+
         return new AddAdminMenuSeparators(
-            $config->int('admin_menu/additional_menu_separators/count'),
-            $config->string('admin_menu/additional_menu_separators/prefix'),
+            $config->int('admin_menu.additional_menu_separators.count'),
+            $config->string('admin_menu.additional_menu_separators.prefix'),
         );
     }
 }

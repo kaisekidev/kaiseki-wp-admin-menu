@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Kaiseki\WordPress\AdminMenu;
 
 use Kaiseki\WordPress\Context\Filter\ContextFilterInterface;
-use Kaiseki\WordPress\Hook\HookCallbackProviderInterface;
+use Kaiseki\WordPress\Hook\HookProviderInterface;
 
-class RemoveAdminMenuPages implements HookCallbackProviderInterface
+use function add_action;
+use function remove_menu_page;
+
+class RemoveAdminMenuPages implements HookProviderInterface
 {
     /**
      * @param array<string, bool|ContextFilterInterface> $pages
@@ -16,7 +19,7 @@ class RemoveAdminMenuPages implements HookCallbackProviderInterface
     {
     }
 
-    public function registerHookCallbacks(): void
+    public function addHooks(): void
     {
         add_action('admin_menu', [$this, 'walkConfig'], 999);
     }

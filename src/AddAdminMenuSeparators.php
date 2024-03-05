@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Kaiseki\WordPress\AdminMenu;
 
-use Kaiseki\WordPress\Hook\HookCallbackProviderInterface;
+use Kaiseki\WordPress\Hook\HookProviderInterface;
 
+use function add_action;
 use function count;
 
-class AddAdminMenuSeparators implements HookCallbackProviderInterface
+class AddAdminMenuSeparators implements HookProviderInterface
 {
-    /** @var list<string>  */
+    /** @var list<string> */
     private array $separatorNames;
 
     public function __construct(int $count, string $prefix)
@@ -18,7 +19,7 @@ class AddAdminMenuSeparators implements HookCallbackProviderInterface
         $this->separatorNames = $this->generateSeparatorNames($count, $prefix);
     }
 
-    public function registerHookCallbacks(): void
+    public function addHooks(): void
     {
         add_action('admin_menu', [$this, 'addMenuSeparators']);
     }
@@ -41,6 +42,9 @@ class AddAdminMenuSeparators implements HookCallbackProviderInterface
     }
 
     /**
+     * @param int    $count
+     * @param string $prefix
+     *
      * @return list<string>
      */
     private function generateSeparatorNames(int $count, string $prefix): array
@@ -52,6 +56,7 @@ class AddAdminMenuSeparators implements HookCallbackProviderInterface
         for ($i = 1; $i <= $count; $i++) {
             $names[] = $prefix . $i;
         }
+
         return $names;
     }
 }

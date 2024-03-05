@@ -22,15 +22,17 @@ final class RemoveAdminMenuPagesFactory
     public function __invoke(ContainerInterface $container): RemoveAdminMenuPages
     {
         /** @var array<string, bool|ContextFilterTypes> $pagesConfig */
-        $pagesConfig = Config::get($container)->array('admin_menu/remove_menu_pages', []);
+        $pagesConfig = Config::fromContainer($container)->array('admin_menu.remove_menu_pages');
         $pages = array_map(function ($config) use ($container) {
             if (is_bool($config)) {
                 return $config;
             }
 
             $map = is_array($config) ? $config : [$config];
+
             return new ContextFilterPipeline(...Config::initClassMap($container, $map));
         }, $pagesConfig);
+
         return new RemoveAdminMenuPages($pages);
     }
 }

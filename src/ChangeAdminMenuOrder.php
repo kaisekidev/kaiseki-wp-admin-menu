@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Kaiseki\WordPress\AdminMenu;
 
 use Kaiseki\WordPress\Environment\EnvironmentInterface;
-use Kaiseki\WordPress\Hook\HookCallbackProviderInterface;
+use Kaiseki\WordPress\Hook\HookProviderInterface;
 
+use function add_filter;
 use function array_diff;
 use function array_map;
 use function array_merge;
@@ -14,10 +15,13 @@ use function str_contains;
 use function str_replace;
 use function var_dump;
 
-class ChangeAdminMenuOrder implements HookCallbackProviderInterface
+class ChangeAdminMenuOrder implements HookProviderInterface
 {
     /**
-     * @param list<string> $menuOrder
+     * @param EnvironmentInterface $environment
+     * @param list<string>         $menuOrder
+     * @param string               $placeholder
+     * @param bool                 $debugMenuOrder
      */
     public function __construct(
         private readonly EnvironmentInterface $environment,
@@ -27,7 +31,7 @@ class ChangeAdminMenuOrder implements HookCallbackProviderInterface
     ) {
     }
 
-    public function registerHookCallbacks(): void
+    public function addHooks(): void
     {
         add_filter('menu_order', [$this, 'updateMenuOrder'], 999, 1);
         add_filter('custom_menu_order', '__return_true');
@@ -35,6 +39,7 @@ class ChangeAdminMenuOrder implements HookCallbackProviderInterface
 
     /**
      * @param list<string> $menuOrder
+     *
      * @return list<string>
      */
     public function updateMenuOrder(array $menuOrder): array
@@ -52,6 +57,7 @@ class ChangeAdminMenuOrder implements HookCallbackProviderInterface
             )) {
             $this->debugMenuOrder($menuOrder);
         }
+
         return $newMenuOrder;
     }
 
@@ -76,16 +82,20 @@ class ChangeAdminMenuOrder implements HookCallbackProviderInterface
 
     /**
      * @param list<string> $menuOrder
+     * @param string       $placeholder
+     *
      * @return list<string>
      */
     private function replaceIndexPlaceholders(array $menuOrder, string $placeholder): array
     {
         $count = 0;
+
         return array_map(function ($menuEntry) use (&$count, $placeholder): string {
             if (!str_contains($menuEntry, $placeholder)) {
                 return $menuEntry;
             }
             $count = $count + 1;
+
             return str_replace($placeholder, (string)$count, $menuEntry);
         }, $menuOrder);
     }
