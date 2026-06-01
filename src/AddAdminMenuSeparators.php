@@ -8,6 +8,7 @@ use Kaiseki\WordPress\Hook\HookProviderInterface;
 
 use function add_action;
 use function count;
+use function is_array;
 
 class AddAdminMenuSeparators implements HookProviderInterface
 {
@@ -31,6 +32,9 @@ class AddAdminMenuSeparators implements HookProviderInterface
             return;
         }
         global $menu;
+        if (!is_array($menu)) {
+            $menu = [];
+        }
         foreach ($this->separatorNames as $index => $name) {
             $menu[$this->getIndexForSeparator($index, $count)] = ['', 'read', $name, '', 'wp-menu-separator'];
         }
